@@ -1,0 +1,24 @@
+{
+  "name": "megastream",
+  "version": "1.0.0",
+  "description": "Stream from mega.nz",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "stream",
+    "mega.nz"
+  ],
+  "author": "thelolagemann",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "megajs": "^0.16.0"
+  },
+  "devDependencies": {
+    "deep-diff": "^1.0.2"
+  }
+}
