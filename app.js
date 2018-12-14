@@ -3,29 +3,23 @@
  */
 const express = require('express');
 const { File } = require('megajs');
+const { log } = require('./helpers');
 
 /**
  * bootstrap express app
  */
 const app = new express();
 
-
 /**
  * various things 
  */
 const baseMega = 'https://mega.nz/#';
-const streamableContainers = [
-  'mkv',
-  'mp4',
-  'webm'
-];
 
 /**
  * helpers
  */
 const genFolderJSON = (req, folder, child) => {
   return folder.map((file, i) => {
-    console.log(file)
     if (file.directory) {
       return {
         name: file.attributes.n,
@@ -71,27 +65,29 @@ app.get('/stream/:link?', (req, res) => {
   let streamTimer;
 
   // increment current requests
-  currentReq++
+  currentReq++;
 
   // close event handler
   req.on('close', () => {
     if (lastReq == currentReq) {
-      isStreaming = false
-      currentReq = 0
-      lastReq = 0
+      log(`Stopping playback of ${currentStream}`);
+      currentStream = '';
+      isStreaming = false;
+      currentReq = 0;
+      lastReq = 0;
     }
 
-    lastReq = currentReq
+    lastReq = currentReq;
   })
   
 
   file.loadAttributes((err, data) => {
-    if (err) res.writeHead(500).send(err)
+    if (err) res.writeHead(500).send(err);
 
     // Handle current stream
     if (currentStream !== data.name) {
-      console.log(`Streaming ${data.name} to ${req.headers['user-agent']} via ${req.protocol}`)
-      currentStream = data.name
+      log(`Streaming ${data.name} to ${req.headers['user-agent']} via ${req.protocol}`);
+      currentStream = data.name;
     }
 
     // Assign true filesize from mega file
@@ -107,27 +103,27 @@ app.get('/stream/:link?', (req, res) => {
 
 
       res.writeHead(206, genHeaders(start, end, fileSize, chunkSize));
-      const dlPipe = file.download({start, end, maxConnections: 1})
+      const dlPipe = file.download({start, end, maxConnections: 1});
   
       // create 5 second interval to watch for stream end
       streamTimer = setInterval(() => {
         if (!isStreaming) {
-          dlPipe.emit('close')
-          clearInterval(streamTimer)
+          dlPipe.emit('close');
+          clearInterval(streamTimer);
         }
-      }, 5000)
+      }, 5000);
 
-      dlPipe.pipe(res)
+      dlPipe.pipe(res);
     } else {
       const head = {
         'Content-Length': fileSize,
         'type': 'video/mp4'
       };
       res.writeHead(206, head);
-      file.download({start: 0, end: 1024 * 1024, maxConnections: 1}).pipe(res)
+      file.download({start: 0, end: 1024 * 1024, maxConnections: 1}).pipe(res);
     }
 
-    isStreaming = true
+    isStreaming = true;
   })
 })
 
@@ -160,5 +156,6 @@ app.get('/folder/:link/:child?', function (req, res) {
   } 
 })
 
-app.listen(8000)
-console.log('MEGA streaming on port 8000')
+// TODO: allow server config
+app.listen(8000);
+console.log('MEGA streaming on port 8000');

@@ -2,9 +2,9 @@
   "name": "megastream",
   "version": "1.0.0",
   "description": "Stream from mega.nz",
-  "main": "index.js",
   "scripts": {
-    "start": "node ./app.js",
+    "dev": "NODE_ENV=development node ./app.js",
+    "start": "NODE_ENV=production node ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
