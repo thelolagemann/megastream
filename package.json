@@ -12,7 +12,7 @@
     "mega.nz"
   ],
   "author": "thelolagemann",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.16.4",
