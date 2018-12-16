@@ -8,7 +8,7 @@ const { File } = require('megajs');
  * local deps
  */
 const { createError, log } = require('./helpers');
-const errorMiddleware = require('./middleware/error.middleware');
+const middlewares = require('./middleware');
 
 /**
  * bootstrap express app
@@ -162,7 +162,13 @@ app.get('/folder/:link?', function (req, res, next) {
   } 
 })
 
-app.use(errorMiddleware);
+/**
+ * load all middlewares
+ */
+
+for (let middleware in middlewares) {
+  app.use(middlewares[middleware]);
+}
 
 // TODO: allow server config
 app.listen(8000);
