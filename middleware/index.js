@@ -10,8 +10,9 @@ const middlewares = {};
 
 for (let child of fs.readdirSync(__dirname)) {
   if (fs.statSync(path.join(__dirname, child)).isFile() && child !== 'index.js') {
+    // eslint-disable-next-line
     middlewares[child] = require(`./${child}`);
   }
 }
 
-module.exports = middlewares
+module.exports = middlewares;
