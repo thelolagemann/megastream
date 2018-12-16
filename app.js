@@ -3,7 +3,12 @@
  */
 const express = require('express');
 const { File } = require('megajs');
-const { log } = require('./helpers');
+
+/**
+ * local deps
+ */
+const { createError, log } = require('./helpers');
+const middlewares = require('./middleware');
 
 /**
  * bootstrap express app
@@ -131,7 +136,8 @@ app.get('/stream/:link?', (req, res) => {
  * barebones api for folders
  * TODO: make this actually work
  */
-app.get('/folder/:link/:child?', function (req, res) {
+app.get('/folder/:link?', function (req, res, next) {
+  if (req.params.link === undefined) return next(createError(404, "No link provided"));
   const folder = File.fromURL(baseMega + req.params.link)
   
   if (req.params.child === undefined) {
@@ -155,6 +161,14 @@ app.get('/folder/:link/:child?', function (req, res) {
     })
   } 
 })
+
+/**
+ * load all middlewares
+ */
+
+for (let middleware in middlewares) {
+  app.use(middlewares[middleware]);
+}
 
 // TODO: allow server config
 app.listen(8000);
